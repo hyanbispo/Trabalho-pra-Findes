@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Flex: Gasolina vs Etanol</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #16a34a;
+            --warning: #ea580c;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        #result {
+            margin-top: 2rem;
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .winner-card {
+            background-color: #dcfce7;
+            border: 2px solid var(--success);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .winner-title {
+            color: var(--success);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.2rem;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .comparison-table th {
+            text-align: left;
+            color: #64748b;
+            font-size: 0.85rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .comparison-table td {
+            padding: 0.5rem 0;
+            font-weight: 600;
+        }
+
+        .highlight {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .note {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⛽ Calculadora Flex</h1>
+
+    <div class="input-group">
+        <div class="row">
+            <div class="col">
+                <label for="priceGas">Preço Gasolina (R$)</label>
+                <input type="number" id="priceGas" step="0.01" placeholder="Ex: 5.89">
+            </div>
+            <div class="col">
+                <label for="priceEth">Preço Etanol (R$)</label>
+                <input type="number" id="priceEth" step="0.01" placeholder="Ex: 3.99">
+            </div>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label>Consumo do seu carro (Km/L)</label>
+        <div class="row">
+            <div class="col">
+                <input type="number" id="consGas" step="0.1" placeholder="Gasolina (Ex: 12)" value="11">
+            </div>
+            <div class="col">
+                <input type="number" id="consEth" step="0.1" placeholder="Etanol (Ex: 8.5)" value="8">
+            </div>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label for="amount">Valor a abastecer (R$)</label>
+        <input type="number" id="amount" placeholder="Ex: 100,00" value="100">
+    </div>
+
+    <button onclick="calculate()">Calcular Melhor Opção</button>
+
+    <div id="result">
+        <div class="winner-card">
+            <div>A melhor opção é:</div>
+            <span class="highlight" id="winnerName">GASOLINA</span>
+            <div id="savingsText">Economia de R$ 0,00 a cada 100km</div>
+        </div>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Comparativo</th>
+                    <th>Gasolina</th>
+                    <th>Etanol</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Litros abastecidos</td>
+                    <td id="resLitresGas">-</td>
+                    <td id="resLitresEth">-</td>
+                </tr>
+                <tr>
+                    <td>Distância estimada</td>
+                    <td id="resDistGas" style="color: var(--primary)">-</td>
+                    <td id="resDistEth" style="color: var(--primary)">-</td>
+                </tr>
+                <tr>
+                    <td>Custo por Km</td>
+                    <td id="resCostGas">-</td>
+                    <td id="resCostEth">-</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p class="note">*Cálculos baseados no consumo informado.</p>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        
+        const priceGas = parseFloat(document.getElementById('priceGas').value);
+        const priceEth = parseFloat(document.getElementById('priceEth').value);
+        const consGas = parseFloat(document.getElementById('consGas').value);
+        const consEth = parseFloat(document.getElementById('consEth').value);
+        const amount = parseFloat(document.getElementById('amount').value);
+
+        
+        if (!priceGas || !priceEth || !consGas || !consEth || !amount) {
+            alert("Por favor, preencha todos os campos.");
+            return;
+        }
+
+        
+        const litresGas = amount / priceGas;
+        const litresEth = amount / priceEth;
+
+        
+        const distGas = litresGas * consGas;
+        const distEth = litresEth * consEth;
+
+        
+        const costKmGas = priceGas / consGas;
+        const costKmEth = priceEth / consEth;
+
+        
+        document.getElementById('result').style.display = 'block';
+
+        
+        const fmtMoney = (val) => `R$ ${val.toFixed(2)}`;
+        const fmtDist = (val) => `${val.toFixed(1)} km`;
+        const fmtLitres = (val) => `${val.toFixed(2)} L`;
+
+        
+        document.getElementById('resLitresGas').innerText = fmtLitres(litresGas);
+        document.getElementById('resLitresEth').innerText = fmtLitres(litresEth);
+        
+        document.getElementById('resDistGas').innerText = fmtDist(distGas);
+        document.getElementById('resDistEth').innerText = fmtDist(distEth);
+
+        document.getElementById('resCostGas').innerText = fmtMoney(costKmGas);
+        document.getElementById('resCostEth').innerText = fmtMoney(costKmEth);
+
+        
+        const winnerLabel = document.getElementById('winnerName');
+        const savingsText = document.getElementById('savingsText');
+        
+        if (costKmEth < costKmGas) {
+            
+            winnerLabel.innerText = "ETANOL";
+            winnerLabel.style.color = "var(--success)";
+            
+            
+            const diffKm = distEth - distGas;
+            savingsText.innerText = `Você andará ${diffKm.toFixed(1)} km a mais com Etanol.`;
+        } else {
+            
+            winnerLabel.innerText = "GASOLINA";
+            winnerLabel.style.color = "var(--warning)";
+            
+            const diffKm = distGas - distEth;
+            savingsText.innerText = `Você andará ${diffKm.toFixed(1)} km a mais com Gasolina.`;
+        }
+    }
+</script>
+
+</body>
+</html>
